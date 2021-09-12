@@ -35,6 +35,7 @@ from pydrake.multibody.tree import (
     RevoluteSpring_,
     RotationalInertia_,
     RigidBody_,
+    ScrewJoint_,
     SpatialInertia_,
     UniformGravityFieldElement_,
     UnitInertia_,
@@ -1528,6 +1529,14 @@ class TestPlant(unittest.TestCase):
                 pos_upper_limit=1.5,
                 damping=damping,
             )
+        def make_screw_joint(plant, P, C):
+            return ScrewJoint_[T](
+                name="screw",
+                frame_on_parent=P,
+                frame_on_child=C,
+                screw_pitch=1.,
+                damping=1.
+            )
 
         def make_universal_joint(plant, P, C):
             return UniversalJoint_[T](
@@ -1570,6 +1579,7 @@ class TestPlant(unittest.TestCase):
             make_planar_joint,
             make_prismatic_joint,
             make_revolute_joint,
+            make_screw_joint,
             make_universal_joint,
             make_weld_joint,
             make_deprecated_weld_joint,
@@ -1702,6 +1712,31 @@ class TestPlant(unittest.TestCase):
                 joint.AddInOneForce(
                     context=context, joint_dof=0, joint_tau=0.0, forces=forces)
                 joint.AddInDamping(context=context, forces=forces)
+            elif joint.name() == "screw":
+                set_translation = T(1.)
+                set_angle = T(3.)
+                joint.set_translation(context=context,
+                                      z=set_translation)
+                numpy_compare.assert_equal(
+                    joint.get_translation(context=context), set_translation)
+                joint.set_rotation(context=context, theta=set_angle)
+                numpy_compare.assert_equal(joint.get_rotation(context=context),
+                                           set_angle)
+                joint.set_translational_velocity(context=context,
+                                                 vz=set_translation)
+                numpy_compare.assert_equal(
+                    joint.get_translational_velocity(context=context),
+                    set_translation)
+                joint.set_angular_velocity(context=context,
+                                           theta_dot=set_angle)
+                numpy_compare.assert_equal(
+                    joint.get_angular_velocity(context=context), set_angle)
+                joint.set_random_pose_distribution(
+                    np.array([1.]) * uniform_random)
+                joint.get_default_translation()
+                joint.set_default_translation(z=0.0)
+                joint.get_default_rotation()
+                joint.set_default_rotation(theta=0.0)
             elif joint.name() == "universal":
                 self.assertEqual(joint.damping(), damping)
                 set_point = array_T([1., 2.])
