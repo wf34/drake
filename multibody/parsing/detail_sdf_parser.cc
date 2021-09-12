@@ -24,6 +24,7 @@
 #include "drake/multibody/tree/revolute_joint.h"
 #include "drake/multibody/tree/revolute_spring.h"
 #include "drake/multibody/tree/spatial_inertia.h"
+#include "drake/multibody/tree/screw_joint.h"
 #include "drake/multibody/tree/uniform_gravity_field_element.h"
 #include "drake/multibody/tree/universal_joint.h"
 #include "drake/multibody/tree/weld_joint.h"
@@ -691,6 +692,17 @@ Eigen::Vector3d ParseVector3(const sdf::ElementPtr node,
   return ToVector3(value);
 }
 
+double ParseScalarAttribute(const sdf::ElementPtr node,
+                            const char* element_name) {
+  if (!node->HasElement(element_name)) {
+    throw std::runtime_error(
+        fmt::format("<{}>: Unable to find the <{}> child tag.", node->GetName(),
+                    element_name));
+  }
+
+  return node->Get<double>(element_name);
+}
+
 const Frame<double>& ParseFrame(const sdf::ElementPtr node,
                                 MultibodyPlant<double>* plant,
                                 const char* element_name) {
@@ -740,6 +752,11 @@ void AddDrakeJointFromSpecification(const sdf::ElementPtr node,
     Vector3d damping = ParseVector3(node, "drake:damping");
     plant->AddJoint(std::make_unique<PlanarJoint<double>>(
         joint_name, parent_frame, child_frame, damping));
+  } else if (joint_type == "screw") {
+    const double damping = ParseScalarAttribute(node, "drake:damping");
+    const double screw_pitch = ParseScalarAttribute(node, "drake:screw_pitch");
+    plant->AddJoint(std::make_unique<ScrewJoint<double>>(
+        joint_name, parent_frame, child_frame, screw_pitch, damping));
   } else {
     throw std::runtime_error(
         "ERROR: <drake:joint> '" + joint_name +

@@ -27,6 +27,7 @@
 #include "drake/multibody/tree/revolute_joint.h"
 #include "drake/multibody/tree/revolute_spring.h"
 #include "drake/multibody/tree/rigid_body.h"
+#include "drake/multibody/tree/screw_joint.h"
 #include "drake/multibody/tree/universal_joint.h"
 #include "drake/systems/framework/context.h"
 
@@ -881,6 +882,19 @@ GTEST_TEST(MultibodyPlantSdfParserTest, JointParsingTest) {
   EXPECT_TRUE(CompareMatrices(planar_joint.position_upper_limits(), inf3));
   EXPECT_TRUE(CompareMatrices(planar_joint.velocity_lower_limits(), neg_inf3));
   EXPECT_TRUE(CompareMatrices(planar_joint.velocity_upper_limits(), inf3));
+
+  // Screw Joint
+  DRAKE_EXPECT_NO_THROW(plant.GetJointByName<ScrewJoint>("screw_joint"));
+  const ScrewJoint<double>& screw_joint =
+      plant.GetJointByName<ScrewJoint>("screw_joint");
+  EXPECT_EQ(screw_joint.name(), "screw_joint");
+  EXPECT_EQ(screw_joint.parent_body().name(), "link7");
+  EXPECT_EQ(screw_joint.child_body().name(), "link8");
+  EXPECT_EQ(screw_joint.damping(), 0.1);
+  EXPECT_TRUE(CompareMatrices(screw_joint.position_lower_limits(), neg_inf));
+  EXPECT_TRUE(CompareMatrices(screw_joint.position_upper_limits(), inf));
+  EXPECT_TRUE(CompareMatrices(screw_joint.velocity_lower_limits(), neg_inf));
+  EXPECT_TRUE(CompareMatrices(screw_joint.velocity_upper_limits(), inf));
 }
 
 // Verifies that the SDF parser parses the joint actuator limit correctly.
