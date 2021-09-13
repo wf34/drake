@@ -239,6 +239,7 @@ Vector3d ExtractJointAxis(const sdf::Model& model_spec,
 double ParseJointDamping(const sdf::Joint& joint_spec) {
   DRAKE_DEMAND(joint_spec.Type() == sdf::JointType::REVOLUTE ||
       joint_spec.Type() == sdf::JointType::PRISMATIC ||
+      joint_spec.Type() == sdf::JointType::SCREW ||
       joint_spec.Type() == sdf::JointType::UNIVERSAL ||
       joint_spec.Type() == sdf::JointType::BALL);
 
@@ -499,6 +500,13 @@ void AddJointFromSpecification(
         joint_spec.Name(),
         parent_body, X_PJ,
         child_body, X_CJ, damping);
+      break;
+    }
+    case sdf::JointType::SCREW: {
+      const double damping = ParseJointDamping(joint_spec);
+      const double screw_pitch{1.0};
+      plant->AddJoint<ScrewJoint>(joint_spec.Name(), parent_body, X_PJ, child_body, X_CJ,
+        screw_pitch, damping);
       break;
     }
     default: {

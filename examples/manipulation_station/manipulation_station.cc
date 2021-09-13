@@ -266,6 +266,27 @@ void ManipulationStation<T>::SetupClutterClearingStation(
 }
 
 template <typename T>
+void ManipulationStation<T>::SetupNutStation(
+      IiwaCollisionModel collision_model, SchunkCollisionModel schunk_model) {
+  DRAKE_DEMAND(setup_ == Setup::kNone);
+  setup_ = Setup::kClutterClearing;
+
+  // Add bolt n nut
+  {
+    const std::string sdf_path = FindResourceOrThrow(
+        "drake/examples/manipulation_station/models/bolt_n_nut.sdf");
+
+    RigidTransform<double> X_WC(RotationMatrix<double>::MakeZRotation(M_PI_2),
+                                Vector3d(-0.145, -0.63, 0.075));
+    internal::AddAndWeldModelFrom(sdf_path, "bin1", plant_->world_frame(),
+                                  "link_0", X_WC, plant_);
+  }
+
+  AddDefaultIiwa(collision_model);
+  AddDefaultWsg(schunk_model);
+}
+
+template <typename T>
 void ManipulationStation<T>::SetupManipulationClassStation(
   IiwaCollisionModel collision_model,
   SchunkCollisionModel schunk_model) {
