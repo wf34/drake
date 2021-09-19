@@ -24,7 +24,7 @@
         <geometry>
           <mesh>
             <uri>./bolt.obj</uri>
-            <scale>1 1 1</scale>
+            <scale>0.1 0.1 0.1</scale>
           </mesh>
         </geometry>
         <material>
@@ -51,7 +51,7 @@
         <geometry>
           <mesh>
             <uri>./bolt.obj</uri>
-            <scale>1 1 1</scale>
+            <scale>0.1 0.1 0.1</scale>
           </mesh>
         </geometry>
         <surface>
@@ -124,7 +124,7 @@
         <geometry>
           <mesh>
             <uri>./nut.obj</uri>
-            <scale>1 1 1</scale>
+            <scale>0.1 0.1 0.1</scale>
           </mesh>
         </geometry>
         <material>
@@ -151,7 +151,7 @@
         <geometry>
           <mesh>
             <uri>./nut.obj</uri>
-            <scale>1 1 1</scale>
+            <scale>0.1 0.1 0.1</scale>
           </mesh>
         </geometry>
         <surface>
@@ -206,7 +206,7 @@
       <child>link_1</child>
       <pose>0 0 0 0 -0 0</pose>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>0 0 1</xyz>
         <limit>
           <lower>-1.79769e+308</lower>
           <upper>1.79769e+308</upper>

@@ -276,9 +276,10 @@ void ManipulationStation<T>::SetupNutStation(
     const std::string sdf_path = FindResourceOrThrow(
         "drake/examples/manipulation_station/models/bolt_n_nut.sdf");
 
-    RigidTransform<double> X_WC(RotationMatrix<double>::MakeZRotation(M_PI_2),
-                                Vector3d(-0.145, -0.63, 0.075));
-    internal::AddAndWeldModelFrom(sdf_path, "bin1", plant_->world_frame(),
+    RigidTransform<double> X_WC(RotationMatrix<double>::Identity(),
+                                // MakeXRotation(M_PI_2),
+                                Vector3d(0.0, -0.65, 0.0));
+    internal::AddAndWeldModelFrom(sdf_path, "nut_and_bolt", plant_->world_frame(),
                                   "link_0", X_WC, plant_);
   }
 
